@@ -1,11 +1,13 @@
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     struct TreeNode *left;
- *     struct TreeNode *right;
- * };
- */
+#include <stdio.h>
+#include <stdlib.h>
+
+
+struct TreeNode {
+      int val;
+      struct TreeNode *left;
+      struct TreeNode *right;
+  };
+
 /**
  * Return an array of arrays of size *returnSize.
  * The sizes of the arrays are returned as *returnColumnSizes array.
