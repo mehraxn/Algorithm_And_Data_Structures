@@ -1,0 +1,53 @@
+#Factorial Calculation Program
+
+## Overview
+This program demonstrates the use of recursion to calculate the factorial of a given number. It contains two different implementations of the factorial function (`fact_v1` and `fact_v2`), both of which employ a recursive approach. The goal of this program is to show how recursion can be used in different ways to solve the same problem and to verify that both versions produce identical results.
+
+## Function Descriptions
+
+### 1. `fact_v1` Function
+The `fact_v1` function calculates the factorial of a number using a straightforward recursive approach. It follows these steps:
+- **Base Case**: If the input number `n` is `0`, the function returns `1` (since `0! = 1`).
+- **Recursive Step**: If `n` is greater than `0`, it returns `n * fact_v1(n - 1)`, effectively reducing the problem size until it reaches the base case.
+
+This version is simple and easy to understand, making it a good starting point for learning recursion.
+
+### 2. `fact_v2` Function
+The `fact_v2` function also calculates the factorial of a number using recursion, but it takes a slightly different approach by introducing an intermediate variable (`f`) to store the result of the recursive call:
+- **Base Case**: If `n` is `0`, the function returns `1`.
+- **Recursive Step**: The function first stores the result of `fact_v2(n - 1)` in the variable `f`, and then returns `n * f`.
+
+Although this version adds an extra step by using an intermediate variable, it still produces the same result as `fact_v1`.
+
+### 3. `main` Function
+The `main` function demonstrates the use of both versions of the factorial function:
+- It prompts the user to input a number (`n`).
+- It calculates the factorial of `n` using both `fact_v1` and `fact_v2`.
+- It then prints the results of both calculations and verifies that they match.
+- If both results are the same, it confirms that the two versions produce identical outputs, demonstrating that the minor difference in structure does not affect the correctness of the factorial calculation.
+
+## How to Compile and Run the Program
+To compile and run the program, use the following commands in your terminal:
+
+```sh
+gcc factorial_functions.c -o factorial_functions
+./factorial_functions
+```
+
+### Expected Output
+The program will prompt the user to enter a number and then display the factorial calculated by both versions of the function. It will also verify that the results are the same:
+
+```
+Input n: 5
+Version 1: 5! = 120
+Version 2: 5! = 120
+Both versions produce the same result: 120
+```
+
+## Summary
+The factorial calculation program is designed to illustrate the concept of recursion in solving mathematical problems. It uses two slightly different recursive implementations (`fact_v1` and `fact_v2`) to calculate the factorial of a given number.
+
+Both functions follow a similar approach, with `fact_v1` directly returning the recursive call result, while `fact_v2` uses an intermediate variable. Despite the difference in implementation, both versions produce the same output, which is demonstrated in the `main` function.
+
+This program is a good example of how recursive functions can be structured in different ways while still achieving the same goal, offering valuable insight into problem-solving using recursion.
+

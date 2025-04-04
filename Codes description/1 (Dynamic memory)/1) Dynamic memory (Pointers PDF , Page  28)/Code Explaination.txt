@@ -1,0 +1,84 @@
+# Array Reading Functions in C
+
+## Overview
+
+This program demonstrates three different ways to read and print an array of integers in the C programming language. Each method uses a different technique for accessing the elements of the array. Although the methods differ in their approach, they all produce the same output, highlighting different ways of working with arrays in C.
+
+### Purpose
+
+The purpose of this program is to showcase different techniques for array manipulation and provide a better understanding of how pointers and array indexing work in C. This can help beginners understand the relationship between arrays and pointers, and how they can be used interchangeably in many situations.
+
+## File Contents
+
+The program is composed of the following components:
+
+### Header Files
+
+- `#include <stdio.h>`: Standard input/output library used for console interaction.
+- `#define L 10`: Define `L` as the length of the array (set to 10).
+
+### Function Prototypes
+
+The following functions are defined and used in the program:
+
+1. **`void readAndPrintArray1(int v[], int length)`**: Reads and prints an array using array indexing.
+2. **`void readAndPrintArray2(int v[], int length)`**: Reads and prints an array using a pointer and pointer arithmetic in a loop.
+3. **`void readAndPrintArray3(int v[], int length)`**: Reads and prints an array using a pointer and pointer offset arithmetic.
+
+### Main Function
+
+- **`int main()`**: The main function initializes an array of integers with values from 1 to 10 and calls each of the three functions to print the array using different methods. The output demonstrates that all methods produce the same result.
+
+### Functions Explained
+
+1. **`readAndPrintArray1(int v[], int length)`**
+   
+   - Uses standard array indexing to access each element in the array.
+   - Iterates through the array using a `for` loop and accesses elements with `v[i]`.
+   - Prints each element to the console.
+
+2. **`readAndPrintArray2(int v[], int length)`**
+
+   - Uses a pointer (`p`) to iterate over the array.
+   - Initializes the pointer to point to the beginning of the array (`v`) and increments the pointer in each loop iteration to move to the next element.
+   - Prints each element using pointer dereferencing (`*p`).
+
+3. **`readAndPrintArray3(int v[], int length)`**
+
+   - Uses a pointer (`p`) to access elements in the array by calculating an offset.
+   - The pointer (`p`) is set to point to the beginning of the array, and elements are accessed using the notation `*(p + i)`, which calculates the address of the element based on the offset `i`.
+   - Prints each element to the console.
+
+### Code Explanation
+
+The program reads and prints an array of integers using three distinct methods to access elements. These methods demonstrate different styles of accessing elements in an array:
+
+- **Array Indexing** (`readAndPrintArray1`): Uses direct array element access (`v[i]`) to iterate through the array.
+- **Pointer Arithmetic in a Loop** (`readAndPrintArray2`): Uses a pointer to move through the array by incrementing the pointer itself within a loop.
+- **Pointer Offset Notation** (`readAndPrintArray3`): Uses pointer arithmetic to calculate the address of each element using an offset.
+
+### Example Output
+
+When the program runs, the following output is produced for each of the three functions:
+
+```
+Output using readAndPrintArray1:
+1 2 3 4 5 6 7 8 9 10
+
+Output using readAndPrintArray2:
+1 2 3 4 5 6 7 8 9 10
+
+Output using readAndPrintArray3:
+1 2 3 4 5 6 7 8 9 10
+```
+
+This output shows that all three functions produce the same result, thus demonstrating the equivalence of the methods when accessing array elements.
+
+### Summary
+
+- **Array Indexing** is straightforward and easy to understand.
+- **Pointer Arithmetic** demonstrates the power of pointers in manipulating array data.
+- **Pointer Offset Notation** provides an alternative view of how arrays can be accessed through address calculations.
+
+All three functions provide different ways to achieve the same goal, reinforcing the concept that arrays and pointers are closely related in C programming. The code serves as a good introduction to these fundamental concepts for beginners in C programming.
+
