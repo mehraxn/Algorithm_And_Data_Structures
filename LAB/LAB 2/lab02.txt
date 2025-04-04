@@ -1,0 +1,179 @@
+Algorithms and Data Structures
+Laboratory number 02
+--------------------
+
+
+
+Exercise 01 (A and B)
+---------------------
+
+A file has the following format:
+- the first row contains an integer number n
+- the following n rows store a string (each string is terminated
+  by a '\n' character).
+The longest string included in the file is 100 character long but
+the average string length is much smaller (e.g., 10 characters).
+
+A C program receives two file names on the command line (input and
+output file names).
+The first file has the format previously specified.
+The program:
+1) reads the content of the first (input) file and stores all strings
+   into a dynamic data structure
+2) orders the strings in alphabetic order
+3) stores the strings in the second (output) file.
+   The output file has the same format of the input one.
+
+Write two versions of the program:
+
+- Version A
+  It stores words in an 1D dynamic array of structures including
+  a dynamically allocated string:
+
+  struct string {
+    char *str;
+  };
+
+- Version B
+  It stores the words in a dynamic matrix:
+  
+  char **mat;
+
+  In this second version, is it necessary to swap the actual strings 
+  or is it sufficient to swap pointers to strings?
+
+Example
+-------
+
+The following is an example of the input file:
+
+10
+this
+is
+an
+example
+of
+file
+used
+to
+order
+strings
+
+and the following is the corresponding output file:
+
+10
+an
+example
+file
+is
+of
+order
+strings
+this
+to
+used
+
+
+
+Exercise 02
+-----------
+
+A matrix of strings is stored in a file with the following format:
+
+R C
+string_1_1 string_1_2 string_1_3 ... string_1_C 
+...
+string_R_1 string_R_2 string_R_3 ... string_R_C 
+
+where R and C are integers, representing the number of rows and
+columns of the matrix, and string_i_j are the strings stored in
+the matrix.
+Each string is at most 20 characters long.
+Notice that strings on each row are already alphabetically ordered.
+
+Write a C program able to "merge" all strings in the matrix in a
+single array of strings, i.e., to store all strings of the matrix
+in a unique array containing all strings alphabetically ordered.
+
+Notice that:
+1. the array has a number of elements equal to RxC, and
+   each element contains a string
+2. as the strings on each row of the matrix are already ordered,
+   strings do not need to be re-ordered completely to generate the
+   final array.
+   See the "suggestions" for further details.
+
+The result has to be stored in an output file, which contains
+the total number of strings on the first row, and all string in the
+following lines.
+
+Example
+-------
+
+The following is an example of input file:
+
+4 3 
+milano torino venezia 
+bari genova taranto 
+firenze napoli roma 
+bologna cagliari palermo
+
+and the following is the corresponding output file:
+
+12
+bari 
+bologna 
+cagliari
+firenze
+genova
+milano
+napoli
+palermo
+roma
+taranto
+torino
+venezia
+
+Suggestions
+-----------
+
+- The dynamic matrix has to be defined as:
+  char ***mat;
+  Allocate it accordingly:
+  - first, allocate the column of pointers to pointers to characters
+  - then, allocate the rows of pointers to characters
+  - finally, allocate the strings.
+
+- The "strdup" function can be used to avoid string allocation.
+
+- To merge two "already ordered" array it is possible to use a "merge"
+  algorithm which is much more efficient than a sorting algorithm.
+
+  Merge uses the following scheme.
+
+  1. Let us suppose A and B are two ordered arrays that have to be
+     merged into array C.
+  2. Set a=0 and b=0 and c=0
+  3. As A is sorted A[a] is the smallest element within A.
+     As B is sorted B[b] is the smallest element within B.
+     Then, the smallest element between A[a] and B[b] is the smallest
+     overall, and it can be copied into array C before any other
+     element.
+     That is:
+
+     if (A[a]<B[b]) {
+       C[c]=A[a]; a++;
+     } else {
+       C[c]=B[b]; b++;
+     }
+     c++;
+     
+  4. After that, repeat all steps from step 3, until all elements
+     within A OR  B have been copied into C.
+  5. At this point, copy the remaining element of A OR B (the one with
+     remaining elements) into C.
+
+  Notice that merge has a linear time cost whereas sorting is linearithmic or
+  quadratic.
+  In this case, it is sufficient to "merge" all rows of the matrix (i.e.,
+  array of strings) in a single array of strings.

@@ -1,0 +1,136 @@
+Algorithms and Data Structures
+Laboratory number 00
+--------------------
+
+
+
+Exercise 01
+-----------
+
+A first file stores a text with an undefined number of rows.
+Each row is shorter than 100 characters.
+A second file stores a list of words.
+Each word is shorter than 20 characters, and the number of words
+is at most equal to 100.
+
+Write a program that counts the number of times each word stored in the
+second file appears in the text stored in the first file.
+
+Once the file has been read, the program has to print out (on the standard
+output) each word with its absolute frequency, i.e., the number of
+times it appears in the text.
+
+Both files have to be read just once.
+Capital and small letters have to be considered as equivalent, e.g.,
+"word" and "WORD" and "WoRd" are considered as equivalent.
+
+Example
+-------
+
+Let the first file be the following one:
+
+Watch your thoughts ; they become words .
+Watch your words ; they become actions .
+Watch your actions ; they become habits .
+Watch your habits ; they become character .
+Watch your character ; it becomes your destiny .
+Lao-Tze
+
+and the second file the following one:
+
+watch
+words
+become
+
+The program has to print-out:
+
+watch - 5 occurrence(s)
+words - 2 occurrence(s)
+become - 4 occurrence(s)
+
+Observation
+-----------
+
+The number of words in the second file is unknown.
+Which are the options that we have to define the data structure storing them?
+Notice that several more options are going to be introduced during the course.
+
+
+
+Exercise 02
+-----------
+
+A file defines a set of rectangles with the following format:
+* Each row of the file contains 1 string and 2 real numbers:
+  - The string (of 4 characters) is the rectangle identifier,
+  - The two numbers specify the x and y coordinates,
+    respectively, of one of its vertices
+* For each rectangle, there are two lines in the file specifying
+  the coordinate of two opposite vertices (top-right and
+  bottom-left or top-left and bottom-right).
+  Notice that, in general, the two rows defining a rectangle are
+  not consecutive, and that it is not known which vertex they
+  specify.
+In any case, suppose the maximum number of rectangles is 100.
+
+Write a C program that receives three file names on the command line:
+- The first file is an input file, and it contains all rectangles
+  specifications as previously indicated
+- The second file is an output file, and it must contain the
+  name of the rectangles ordered by ascending area values.
+- The third file is an output file, and it must contain the
+  name of the rectangles ordered by ascending perimeter values.
+
+Suggestion
+----------
+
+Use an array of structures where each element on the array stores
+the name and the two extreme coordinates.
+
+Example
+-------
+
+Let us suppose that the program receives the following three parameters:
+fileIn.txt fileArea.txt filePerimeter.txt
+
+Moreover, let us suppose that the content of fileIn.txt is the following:
+
+rct2  1.5 3.5
+xxyy  -0.5 3.0
+xxyy  1.5 2.0
+abcd  1.0 4.5
+ktkr  -2.5 1.5
+abcd  2.0 2.0
+rct2  3.5 -2.0
+trya  2.5 -1.0
+ktkr  1.5 3.5
+trya  4.0 4.0
+
+As areas and perimeters of the rectangles are:
+rct2   area=11.00   perimeter=15.00
+xxyy   area= 2.00   perimeter= 6.00
+abcd   area= 2.50   perimeter= 7.00
+ktkr   area= 8.00   perimeter=12.00
+trya   area= 7.50   perimeter=13.00
+the program has to generate the following two files:
+
+fileArea.txt:
+rct2
+ktkr
+trya
+abcd
+xxyy
+
+filePerimeter.txt:
+rct2
+trya
+ktkr
+abcd
+xxyy
+
+Observation
+-----------
+
+The number of rectangles is undefined.
+Which are the options that we have to define the data structure storing them?
+Notice that several more options are going to be introduced during the course.

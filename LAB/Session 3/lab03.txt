@@ -1,0 +1,126 @@
+Algorithms and Data Structures
+Laboratory number 03
+--------------------
+
+
+
+Exercise 01 (A, B, C)
+Extension of Exercise 01, Laboratory 01
+---------------------------------------
+
+A text of unknown length, but whose rows are limited to 1000
+characters, is stored in a file.
+
+Write a C application able to evaluate the absolute frequency of all
+strings which appear in the file.
+
+More specifically the program has to:
+* Receive on the command line two file names (the input and the output
+  file, respectively).
+* Read the input file and store all words in a list.
+  Each node of the list must contain the string and its absolute
+  frequency within the input file.
+  Capital and small letters have to be considered as equivalent
+  (i.e., "WORD", "Word", and "word" are the same string).
+* Store the list into the output file.
+
+The list may be manipulated using three different methods:
+A. Head insertions.
+   The order of the strings in the input file will be inverted in the list.
+B. Tail insertions (using a list with a tail pointer with or without a
+   circular implementation).
+   The order of the strings in the input file will be maintained in the list.
+C. Ordered insertion (into an ordered list).
+   The strings in the input file will be ordered alphabetically in the list.
+You can choose to implement version A, B, or C or all of them.
+
+Example
+-------
+
+This is a correct input file
+
+Mi illumino di immenso
+Illumino di immenso
+Di immenso
+IMMENSO
+
+The output file has to be the following (order depends on the type of
+the list selected):
+
+immenso 4
+di 3
+illumino 2
+Mi 1
+
+
+
+Exercise 02
+-----------
+
+An input file contains data on a set of employees.
+For each employee there is a row in the file, including:
+* Last and first name (a single C string, maximum 50 characters,
+  e.g., Smith_John).
+* Personal identification (exactly 16 characters).
+* Data of hiring (format dd.mm.yyy, e.g, 30.05.2005).
+* Salary (integer value, in euro).
+Fields are space-separated.
+Employees do not appear in any specific order.
+
+A C program receives 3 parameters on the command line:
+* Input file name (the format is the previously defined one).
+* A single string, representing a last and first name pair (e.g.,
+  Clinton_Bill).
+* A string made of only + and - characters (e.g., +++---+-+).
+
+The program has to:
+* Read the file.
+* Store its content in a LIFO-logic list, but with two pointers for
+  each element one pointing ahead and one pointing behind the element
+  itself as:
+
+  pHead  --> ----- --> ----- --> ----- --> ----- -X
+             |###|     |###|     |###|     |###|
+          X- ----- <-- ----- <-- ----- <-- -----
+
+* Find in the list the element storing the employee whose name is
+  passed on the command line as a second parameter.
+* Move along the list in the
+  - right direction for each '+' character
+  - left direction for each '-' character
+  in the third string parameter.
+  For each visited node of the list (including the first one) the
+  program has to print out (on standard output) all data of the
+  employee (with the same format this data appears in the original
+  input file).
+  If the end of the list is reached (at either side) the program has to
+  print-out the same element repeatedly.
+
+Example
+-------
+
+Let the command line parameters be the following
+
+file.txt Giallo_Antonio ---+
+
+and the input file be the following
+
+Rossi_Alberto A1B1C1D1E1F1G1H1 03.12.1998 1845
+Giallo_Antonio A2B2C2D2E2F2G2H2 13.11.2007 1140
+Verdi_Federica A3B3C3D3E3F3G3H3 25.09.1989 2157
+Bianchi_Elena A4B4C4D4E4F4G3H4 15.02.2004 1345
+
+The file has to be stored in the LIFO structure as:
+Bianchi  ->  Verdi  -> Giallo  -> Rossi  
+Then, the program has to:
+- find Giallo_Antonio in the list and print its data
+- move left on Verdi and print its data (first -)
+- move left again and print Bianchi (second -)
+- do not move and print Bianchi again (third -)
+- move right and print Verdi (first +):
+
+Giallo_Antonio A2B2C2D2E2F2G2H2 13.11.2007 1140
+Verdi_Federica A3B3C3D3E3F3G3H3 25.09.1989 2157
+Bianchi_Elena A4B4C4D4E4F4G3H4 15.02.2004 1345
+Bianchi_Elena A4B4C4D4E4F4G3H4 15.02.2004 1345
+Verdi_Federica A3B3C3D3E3F3G3H3 25.09.1989 2157

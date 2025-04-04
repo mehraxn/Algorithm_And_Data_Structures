@@ -1,0 +1,13 @@
+12
+bari
+bologna
+cagliari
+firenze
+genova
+milano
+napoli
+perugia
+roma
+taranto
+torino
+venezia

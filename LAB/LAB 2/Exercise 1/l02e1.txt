@@ -1,0 +1,11 @@
+10
+this
+is
+an
+example
+of
+file
+used
+to
+order
+strings
