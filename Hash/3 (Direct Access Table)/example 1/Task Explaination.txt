@@ -1,0 +1,108 @@
+Implementing a Direct Access Table for Attendance Tracking
+
+Description:
+In this project, you will design and implement a simple Direct Access Table (DAT) in C to track attendance for students in a classroom. Each student is assigned a unique ID within a fixed range, and their attendance (present or absent) will be stored directly in a predefined array.
+
+The goal is to reinforce your understanding of direct access tables and how they work with a finite universe of keys.
+
+Learning Objectives:
+Understand and implement a Direct Access Table (DAT).
+Efficiently use arrays to represent data with direct key-to-index mapping.
+Handle operations like insertion, display, and error checking for invalid input.
+Task Requirements:
+Define the Problem:
+
+The classroom has a fixed number of students, each with a unique ID ranging from 0 to N-1.
+Each student can either be present or absent.
+Implement a Direct Access Table to record and display attendance.
+Functional Requirements:
+
+Initialize Attendance: Start with all students marked as absent.
+Mark Attendance: Write a function to mark specific students as present based on their ID.
+Display Attendance: Write a function to display the attendance of all students.
+Error Handling: Ensure that invalid student IDs (outside the range) are handled gracefully.
+Extra Credit (Optional): Allow users to toggle attendance (mark absent students as present and vice versa).
+Constraints:
+
+Assume a maximum class size N (e.g., 𝑁 = 10 ).
+
+Use a boolean array to store attendance.
+No external libraries should be used (other than standard input/output).
+Deliverables:
+Source Code:
+
+A well-documented C program with the following functions:
+initializeAttendance(): Initializes the DAT.
+markAttendance(int id): Marks a student as present.
+displayAttendance(): Displays the attendance.
+Additional optional features as applicable.
+ReadMe File:
+
+A text file (README.md) describing:
+Purpose of the program.
+Instructions for compiling and running the program.
+Example input/output.
+Test Cases:
+
+A document (TestCases.txt) listing:
+Test inputs for marking attendance.
+Expected outputs.
+Suggested Project Structure:
+Header Section:
+
+Include proper documentation (e.g., project title, your name, date, description).
+Constants and Globals:
+
+Define constants (e.g., MAX_ID for the universe size).
+Functions:
+
+initializeAttendance(): Initialize all slots in the DAT to false (absent).
+markAttendance(int id): Accept a student ID, check its validity, and mark it present.
+displayAttendance(): Display the attendance status of all students.
+Additional optional features like toggling attendance or resetting all records.
+Main Function:
+
+Provide a menu-driven interface for users to:
+Mark a student as present.
+View the attendance list.
+Exit the program.
+Evaluation Criteria:
+Criteria	Weight (%)
+Code Functionality	40%
+- Properly initializes the DAT	10%
+- Marks attendance correctly	15%
+- Displays attendance correctly	15%
+Error Handling	20%
+- Handles invalid IDs gracefully	10%
+- Prevents crashes	10%
+Code Quality	20%
+- Readability and comments	10%
+- Proper use of functions	10%
+Documentation	10%
+- README and test cases	10%
+Optional Features	10%
+Submission Instructions:
+Upload the following files:
+Source code file (attendance.c).
+README file (README.md).
+Test cases file (TestCases.txt).
+Ensure all files are zipped into a single archive (Project_DirectAccessTable.zip) before submission.
+Example Output:
+Input:
+Initialize attendance.
+Mark attendance for students with IDs 3, 5, and 8.
+Display the attendance.
+Output:
+yaml
+Copy code
+Student Attendance:
+Student ID 0: Absent
+Student ID 1: Absent
+Student ID 2: Absent
+Student ID 3: Present
+Student ID 4: Absent
+Student ID 5: Present
+Student ID 6: Absent
+Student ID 7: Absent
+Student ID 8: Present
+Student ID 9: Absent
