@@ -1018,7 +1018,7 @@ void manage_memory(void) {
     free(data);  // Always free dynamically allocated memory when done
 }
 ```
-### 4. Confusing Linkage Rules (continued)
+### 4. Confusing Linkage Rules 
 
 ```c
 // In header.h
