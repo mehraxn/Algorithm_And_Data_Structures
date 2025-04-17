@@ -1,4 +1,6 @@
-int comb_rep(int *val, int *sol, int n, int k, int start, int count, int pos) {
+#include <stdio.h>
+
+int comb(int *val, int *sol, int n, int k, int start, int count, int pos) {
     int i;
 
     // Termination condition: if we have filled all positions in the solution array
@@ -14,7 +16,7 @@ int comb_rep(int *val, int *sol, int n, int k, int start, int count, int pos) {
     for (i = start; i < n; i++) {
         sol[pos] = val[i];  // Fill sol[pos] with the value val[i]
         // Recur to fill the next position
-        count = comb_rep(val, sol, n, k, i, count, pos + 1);
+        count = comb(val, sol, n, k, i+1, count, pos + 1);
     }
 
     return count;  // Return the total count of combinations
