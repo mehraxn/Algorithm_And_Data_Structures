@@ -1,24 +1,21 @@
-int perm_rep (int *val_dist, int *sol, int *mark,
-              int n, int n_dist, int count, int pos) {
-
+int comb_rep(int *val, int *sol, int n, int k, int start, int count, int pos) {
     int i;
 
-    if (pos >= n) {
-        for (i = 0; i < n; i++) {
+    // Termination condition: if we have filled all positions in the solution array
+    if (pos >= k) {
+        for (i = 0; i < k; i++) {
             printf("%d ", sol[i]);
         }
         printf("\n");
         return count + 1;
     }
 
-    for (i = 0; i < n_dist; i++) {
-        if (mark[i] > 0) {  // Check if occurrences are available
-            mark[i]--;  // Use one occurrence of val_dist[i]
-            sol[pos] = val_dist[i];  // Place the element in the solution array
-            count = perm_rep(val_dist, sol, mark, n, n_dist, count, pos + 1);  // Recur to next position
-            mark[i]++;  // Backtrack: restore the occurrence for other iterations
-        }
+    // Iteration on choices: iterate over possible values from 'start' onwards
+    for (i = start; i < n; i++) {
+        sol[pos] = val[i];  // Fill sol[pos] with the value val[i]
+        // Recur to fill the next position
+        count = comb_rep(val, sol, n, k, i, count, pos + 1);
     }
 
-    return count;  // Return the total count of permutations
+    return count;  // Return the total count of combinations
 }
