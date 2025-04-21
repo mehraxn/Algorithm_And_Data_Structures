@@ -1,0 +1,90 @@
+int point(int *time ,int *priority,int n , int template){
+	int i, x;
+	
+	for (i=0;i<n;i++)
+		if(time[i]==template)
+		return priority[i];
+
+}
+
+
+
+
+
+int compare(int *sol , int * best, int * time ,int n,int k , int l , int * priority , int threshold ){
+
+	int counter=0;
+	
+	for (int i=0;i<k;i++)
+		counter+=sol[i];
+	if (counter> threshold)
+		return 0;
+	
+	int cuurent_priority=0;
+	for (int i=0;i<l;i++)
+	current_priority+=point(time,priority,n,best[i]);
+
+	int second_priority=0;	
+	for (int i=0;i<k;i++)
+	second_priority+=point(time,priority,n,sol[i]);
+		
+	if (second_priority > current_priority)
+	return 1;
+	
+	retirn 0;
+				
+	
+
+
+}
+
+
+
+
+void arrangement (int * val , int *mark , int *sol , int n ,int k, int pos , int threshold , int *best , int * l , int * priority){
+
+	int i;
+	
+	if(pos>=k){
+	int flag=0;
+	flag=compare(sol,best,k,l,priority);
+	if (flag){
+	for (int j=0 ; j<;n;j++)
+		best[j]=0;
+	for(int j=0;j<k;j++)
+	best[j]=sol[j];
+	(*l)=k;		
+	}				
+	}
+
+	for(int i=0 ; i<n ; i++){
+	if(mark[i]==0){
+	mark[i]=1;
+	sol[pos]=val[i];
+	arrangement(val,mark,sol,n,k,pos+1,threshold,best,l,priority);
+	mark[i]=1}
+
+	return;
+}
+
+
+
+
+ void opt_task (int n, int *time, int *priority, int th, int *best, int *l, int *max){
+
+	int i;
+	
+		
+	int *sol=(int *)malloc(n * sizeof(int);
+	int *mark=(int *)calloc(n , sizeof(int);
+	for (i=1;i<n+1;i++){
+	arrangement (time ,mark ,sol ,n ,i, 0 ,  threshold , best , l , priority);
+			}
+
+
+		free(sol);
+		free(mark);
+
+
+
+		}

@@ -1,0 +1,122 @@
+# README: Explanation of the `erase_duplicate` Function
+
+This document provides a comprehensive, line-by-line explanation of the `erase_duplicate` function, which removes duplicate characters from a given string.
+
+---
+
+### **Header File**
+```c
+#include <stdbool.h>
+```
+- The `stdbool.h` library is included to use the `bool` data type, which represents boolean values (`true` or `false`).
+
+---
+
+### **Function Prototype**
+```c
+void erase_duplicate(char *str);
+```
+- **Purpose**: Removes all duplicate characters from the input string while retaining only the first occurrence of each character.
+- **Parameter**:
+  - `char *str`: A pointer to the string to be modified.
+- **Return Value**: The function does not return a value. It modifies the input string directly.
+
+---
+
+### **Implementation**
+#### 1. **Boolean Array Initialization**
+```c
+bool seen[256] = {false};
+```
+- A boolean array `seen` of size 256 is created to track whether a character has already been encountered.
+- **Why 256?** The array size corresponds to the total number of ASCII characters (0-255).
+- **Initialization**: All elements are initialized to `false` to indicate that no characters have been seen yet.
+
+#### 2. **Index Initialization**
+```c
+int write_index = 0;
+```
+- **Purpose**: `write_index` keeps track of the position in the string where the next unique character will be written.
+
+#### 3. **Iterate Over the String**
+```c
+for (int read_index = 0; str[read_index] != '\0'; read_index++) {
+```
+- **Purpose**: Loops through each character in the string using `read_index`.
+- **Condition**: The loop continues until the null terminator (`\0`) is reached, marking the end of the string.
+
+#### 4. **Retrieve Current Character**
+```c
+char current_char = str[read_index];
+```
+- `current_char` holds the character at the current position (`read_index`) in the string.
+
+#### 5. **Check If Character Is Unique**
+```c
+if (!seen[(unsigned char)current_char]) {
+```
+- **Purpose**: Checks if the current character has not been encountered before.
+- **Casting**: `unsigned char` ensures that the character is used as a valid array index (0-255).
+
+#### 6. **Mark Character as Seen and Write to String**
+```c
+seen[(unsigned char)current_char] = true;
+str[write_index++] = current_char;
+```
+- **Mark as Seen**: Updates the corresponding index in the `seen` array to `true`.
+- **Write to String**: Copies the unique character to the position indicated by `write_index` and increments `write_index` for the next unique character.
+
+#### 7. **Skip Duplicates**
+- If the character has already been seen (`seen[(unsigned char)current_char] == true`), it is skipped.
+
+#### 8. **Terminate the String**
+```c
+str[write_index] = '\0';
+```
+- After all unique characters have been written, a null terminator (`\0`) is added to indicate the end of the string.
+
+---
+
+### **Explanation of the Function Logic**
+1. **Tracking Seen Characters**:
+   - The `seen` array efficiently tracks whether a character has already been encountered in the string.
+   - By using ASCII values as indices, the function can handle all standard characters.
+
+2. **Two-Pointer Technique**:
+   - `read_index`: Reads characters from the original string.
+   - `write_index`: Writes unique characters back to the string, ensuring no duplicates.
+
+3. **In-Place Modification**:
+   - The string is modified directly, without requiring additional storage for the result.
+
+4. **Efficiency**:
+   - **Time Complexity**: O(n), where `n` is the length of the string. Each character is processed once.
+   - **Space Complexity**: O(1), as the `seen` array size is fixed (256 elements).
+
+---
+
+### **Example Execution**
+#### Input:
+```c
+char str[] = "aa;;;bbbab";
+```
+#### Steps:
+1. Initialize `seen` array to all `false` values.
+2. Iterate through the string:
+   - Process 'a': Mark as seen and retain.
+   - Process ';': Mark as seen and retain.
+   - Skip repeated 'a', ';', and 'b'.
+   - Process 'b': Mark as seen and retain.
+3. Add null terminator at the end of the modified string.
+
+#### Output:
+```c
+"a;b"
+```
+
+---
+
+### **Usage**
+This function is suitable for applications where deduplication of characters in a string is required, such as preprocessing text for analysis or formatting input data.
+
+---
