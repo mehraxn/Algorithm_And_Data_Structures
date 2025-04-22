@@ -11,8 +11,11 @@ void merge(int * , int * , int , int , int );
 void bottom_up_merge_sort(int * A, int size ){
     int * B=(int*)malloc(size * sizeof(int ));
     for (int m=1;m<size;m=m+m)
-        for (int i=0;i<size-m;i=m+m)
+        for (int i=0;i<size-m;i+=m+m)
             merge(A,B,i,i+m-1,min(size-1,i+m+m-1));
+
+
+    free(B);
 
 }
 void merge(int * A, int * B, int l, int c , int r ){
