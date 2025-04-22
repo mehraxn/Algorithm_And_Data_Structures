@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void merge(int *, int *, int , int , int );
+void bottom_up_merge_sort(int *, int );
+
+
+
+
 // Function to perform bottom-up merge sort on array A of size N
 void bottom_up_merge_sort(int *A, int N) {
     int i, m, l = 0, r = N - 1;

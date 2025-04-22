@@ -1,13 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void merge(int *, int *, int , int , int );
-void bottom_up_merge_sort(int *, int );
-
-
-
-
 // Function to perform bottom-up merge sort on array A of size N
+// This function sorts the array A using an iterative, bottom-up merge sort approach.
 void bottom_up_merge_sort(int *A, int N) {
     int i, m, l = 0, r = N - 1;
     int *B = (int *)malloc(N * sizeof(int));
@@ -15,34 +10,38 @@ void bottom_up_merge_sort(int *A, int N) {
     // Iteratively merge subarrays of increasing size
     for (m = 1; m <= r - l; m = m + m) {
         for (i = l; i <= r - m; i += m + m) {
+            // Merge subarrays of size m
             merge(A, B, i, i + m - 1, (i + m + m - 1 < r) ? (i + m + m - 1) : r);
         }
     }
+
+    // Free the allocated memory for the temporary array
     free(B);
 }
 
-// Function to merge two sorted subarrays of A into a temporary array B
-// Subarrays are A[l..c] and A[c+1..r]
-void merge(int *A, int *B, int l, int c, int r) {
-    int i, j, k;
+// Function to merge two sorted arrays v1 and v2 into v3
+// Arrays v1 and v2 have size n each
+// This function combines two sorted arrays into a single sorted array.
+void merge(int *v1, int *v2, int *v3, int n) {
+    int i1 = 0, i2 = 0, i3 = 0;
 
-    // Merge the two subarrays into B
-    for (i = l, j = c + 1, k = l; i <= c && j <= r; ) {
-        if (A[i] <= A[j])
-            B[k++] = A[i++];
-        else
-            B[k++] = A[j++];
+    // Merge elements from v1 and v2 into v3
+    while (i1 < n && i2 < n) {
+        if (v1[i1] < v2[i2]) {
+            v3[i3++] = v1[i1++];
+        } else {
+            v3[i3++] = v2[i2++];
+        }
     }
 
-    // Copy remaining elements from the left subarray, if any
-    while (i <= c)
-        B[k++] = A[i++];
+    // Copy remaining elements from v1, if any
+    while (i1 < n) {
+        v3[i3++] = v1[i1++];
+    }
 
-    // Copy remaining elements from the right subarray, if any
-    while (j <= r)
-        B[k++] = A[j++];
-
-    // Copy the merged elements back into the original array A
-    for (k = l; k <= r; k++)
-        A[k] = B[k];
+    // Copy remaining elements from v2, if any
+    while (i2 < n) {
+        v3[i3++] = v2[i2++];
+    }
 }
+
