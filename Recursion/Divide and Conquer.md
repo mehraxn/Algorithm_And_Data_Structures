@@ -9,8 +9,8 @@ This technique is often used in sorting algorithms, matrix multiplication, and m
 
 ### 1. Divide
 - **Start with a problem of size `n`**.
-- **Partition** the problem into `n^` **independent** subproblems.
-- Each subproblem has a size `n^` such that `\u0302n < n`.
+- **Partition** the problem into `a>=1` **independent** subproblems.
+- Each subproblem has a size `n^` such that `n^ < n`.
 
 ### 2. Conquer
 - **Solve** the subproblems recursively.
