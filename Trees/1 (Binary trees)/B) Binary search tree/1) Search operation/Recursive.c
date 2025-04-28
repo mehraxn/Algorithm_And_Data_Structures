@@ -11,11 +11,6 @@ typedef struct node_t {
 // Function declaration
 node* binary_search_tree(node* root, char* key_search);
 
-int main() {
-    printf("Hello, World!\n");
-    return 0;
-}
-
 // Binary search function for strings in a binary search tree
 node* binary_search_tree(node* root, char* key_search) {
 
