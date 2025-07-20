@@ -1,0 +1,103 @@
+Algorithms and Data Structures
+Laboratory number 05
+--------------------
+
+Exercise 01
+-----------
+
+Write a C program solving the "magic square" problem.
+
+A "magic square" of size equal to n is a (n x n) matrix of
+integers containing only integer numbers from 1 to (n x n),
+such that the sum of those values on all rows, on all columns,
+and on the two diagonals is the same.
+
+The program has to receive two parameters on the command line:
+* an integer value n
+* a file name
+and it has to store one magic square of size n on the file.
+
+Example
+-------
+
+If we suppose to run the program with the following two parameters
+3 square.txt
+it has to store in the file the following matrix:
+
+8 3 4
+1 5 9
+6 7 2
+
+which includes all numbers from 1 to 9 (3x3) and satisfies the requested
+criteria (all the above mentioned sums are equal to 15).
+
+EXTRA
+
+A standard approach may not be able to find a solution for square with n > 3. One possible optimization that you may implement is to consider that the sum of all rows, columns, diagonals has a specific value that depends on n. Let’s call it the magic constant m:
+    
+$$
+m = n (n^2 + 1) /2
+$$
+    
+In the case of a square of size 3, the magic constant is m = 15.
+    
+Using this information you can force your program to discard those partial solutions that do not satisfy this constraint.
+    
+For example:
+
+1 2 3
+4 . .
+. . .
+    
+Will not be part of a valid solution, as the sum of the values on the first row is 6 != 15.
+
+
+Exercise 02
+-----------
+
+The reflected binary code, also known as Gray code after Frank Gray,
+is a binary numeral system where two successive values differ in only
+one bit (binary digit). 
+
+The code list for n bits can be generated recursively from the list
+for n−1 bits by reflecting the list (i.e. listing the entries in
+reverse order), concatenating the original list with the reversed
+list, prefixing the entries in the original list with a binary 0, and
+then prefixing the entries in the reflected list with a binary 1.
+
+Example
+-------
+
+The two codes of length equal to 1 are made-up of one 0 and one 1:
+
+  0
+  1
+
+To move from 1 to 2 bits, the list is firstly reflected (-- indicates
+a mirror), and then 0s are added above and 1s below the reflection
+point.
+
+  0      0     00
+  1      1     01
+---    ---    ---
+         1     11
+         0     10
+
+The process in then repeated to move from 2 to 3 bits (reflection and
+then 0s and 1s addition):
+
+ 00     00    000 
+ 01     01    001 
+ 11     11    011 
+ 10     10    010 
+---    ---    ---
+        10    110 
+        11    111 
+        01    101 
+        00    100 
+
+Write a recursive program that:
+- Receives n as a parameter
+- Generates all Gray codes on n bits, and stores the codes in a dynamic
+  matrix with n columns and 2^n rows
+- Prints out the resulting matrix.
