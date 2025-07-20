@@ -1,0 +1,9 @@
+it001 500 15131
+it001 Panda 12001
+it001 Punto 17891
+ge002 AClass 22411
+ge002 CClass 75641
+it002 Y 14487
+ja001 Aygo 12567
+ja001 Corolla 26745
+ge001 Serie1 33456
