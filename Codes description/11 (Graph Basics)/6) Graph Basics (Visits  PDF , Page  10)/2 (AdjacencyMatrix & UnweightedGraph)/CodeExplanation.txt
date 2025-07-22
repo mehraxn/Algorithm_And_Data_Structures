@@ -1,0 +1,119 @@
+# README: Shortest Path Algorithm Using Adjacency Matrix in C
+
+This program implements the **shortest path algorithm** using an adjacency matrix in the C programming language. It can handle **both unweighted and weighted graphs** and uses a simplified version of **Dijkstra's algorithm** (suitable for graphs with non-negative edge weights).
+
+---
+
+## 💡 What This Program Does
+
+* Accepts a graph in the form of an adjacency matrix (2D array).
+* Each cell `G[i][j]` represents the weight of the edge from vertex `i` to vertex `j`.
+* Zero (`0`) means there is **no edge** between `i` and `j`.
+* Runs Dijkstra's algorithm to find the **shortest paths** from a user-specified **source vertex** to all other vertices.
+* Outputs each vertex's:
+
+  * Shortest distance from the source.
+  * Predecessor in the shortest path tree.
+
+---
+
+## 📌 Key Variables
+
+```c
+int n, s;
+```
+
+* `n`: Number of vertices in the graph.
+* `s`: Source vertex from which shortest paths are calculated.
+
+```c
+int G[MAX][MAX];
+```
+
+* The adjacency matrix storing edge weights.
+* `G[i][j]` > 0 indicates a weighted edge from `i` to `j`.
+
+```c
+int dist[MAX], pred[MAX], visited[MAX];
+```
+
+* `dist[i]`: Stores the shortest known distance from source `s` to vertex `i`.
+* `pred[i]`: Stores the predecessor of vertex `i` in the shortest path.
+* `visited[i]`: Marks whether vertex `i` has been processed.
+
+---
+
+## 🔄 Algorithm Overview (Dijkstra's Algorithm)
+
+1. **Initialization:**
+
+   * Set all distances to `INF` (a large constant).
+   * Set all predecessors to `-1` (meaning "none").
+   * Mark all vertices as unvisited.
+   * Set the distance from source `s` to itself as `0`.
+
+2. **Main Loop:**
+
+   * Pick the unvisited vertex `u` with the smallest known distance.
+   * Mark `u` as visited.
+   * For every neighbor `v` of `u`, if the new path through `u` is shorter, update:
+
+     * `dist[v]`
+     * `pred[v]`
+
+3. **Repeat** until all reachable vertices are visited or all distances are finalized.
+
+---
+
+## 🧾 Input Format
+
+* First input: number of vertices `n`
+* Next `n x n` inputs: adjacency matrix entries (weights or 0 for no edge)
+* Final input: source vertex index (from `0` to `n-1`)
+
+**Example:**
+
+```
+Enter number of vertices (max 100): 4
+Enter 4x4 adjacency matrix (weights, 0 = no edge):
+0 1 4 0
+1 0 2 6
+4 2 0 3
+0 6 3 0
+Enter source vertex (0...3): 0
+```
+
+---
+
+## ✅ Output Format
+
+```
+Vertex  Distance  Predecessor
+  0        0         -1
+  1        1          0
+  2        3          1
+  3        6          2
+```
+
+---
+
+## 🧠 Notes
+
+* The graph must **not contain negative weights** (Dijkstra's algorithm cannot handle them).
+* The code assumes a **dense graph** due to the use of an adjacency matrix (space complexity: O(n^2)).
+* For sparse graphs, an adjacency list + priority queue would be more efficient.
+
+---
+
+## 🔧 How to Compile & Run
+
+```bash
+gcc shortest_path.c -o shortest_path
+./shortest_path
+```
+
+---
+
+## 👨‍💻 Author
+
+This explanation and program were generated with the help of OpenAI's ChatGPT.
