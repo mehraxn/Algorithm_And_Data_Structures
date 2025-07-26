@@ -2,13 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void invert_string(char *s1, char **s2);
-
-int main() {
-	char *res;
-	invert_string("ABCDDDDZYXWEFGGAA",&res);
-	printf("result: %s\n",res);
-}
 
 void invert_string(char *s1, char **s2) {
 	int len = strlen(s1);
