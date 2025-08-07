@@ -1,0 +1,26 @@
+4
+Will Smith
+Bradley Cooper
+Amanda Seyfried
+Richard Gere
+
+3
+Mark Ruffalo
+Willem Dafoe
+Gene Wilder
+
+5
+Leonardo DiCaprio
+Nicolas Cage
+Clint Eastwood
+Tom Hanks
+Rami Malek
+
+2
+Robert Downey Jr.
+Al Pacino
+
+3
+Matthew McConaughey
+Woody Harrelson
+Owen Wilson
