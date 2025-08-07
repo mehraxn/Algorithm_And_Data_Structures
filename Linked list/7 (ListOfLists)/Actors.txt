@@ -1,26 +1,26 @@
-4
+4 Pennsylvania
 Will Smith
 Bradley Cooper
 Amanda Seyfried
 Richard Gere
 
-3
+3 Wisconsin
 Mark Ruffalo
 Willem Dafoe
 Gene Wilder
 
-5
+5 California
 Leonardo DiCaprio
 Nicolas Cage
 Clint Eastwood
 Tom Hanks
 Rami Malek
 
-2
+2 New York
 Robert Downey Jr.
 Al Pacino
 
-3
+3 Texas
 Matthew McConaughey
 Woody Harrelson
 Owen Wilson
