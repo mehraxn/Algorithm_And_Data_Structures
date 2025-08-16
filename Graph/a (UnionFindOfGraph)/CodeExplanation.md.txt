@@ -1,0 +1,118 @@
+# README: Graph Data Structures and Union-Find
+
+## 📌 Purpose and Aim
+
+This project defines data structures for representing graphs and provides a **Union-Find (Disjoint Set)** helper function. The main aim is to:
+
+* Represent a graph using an adjacency matrix.
+* Store traversal-related attributes for each vertex (for BFS/DFS and SCC algorithms).
+* Provide a **union-find `find` function** to support graph algorithms like **Kruskal's Minimum Spanning Tree (MST)** or connectivity checks.
+
+The **Union-Find algorithm** is used to efficiently manage disjoint sets, particularly in applications like cycle detection and MST construction.
+
+---
+
+## ⚙️ Algorithm in Brief: Union-Find (Disjoint Set)
+
+Union-Find (or Disjoint Set Union, DSU) is a data structure that supports two main operations:
+
+* **Find(x):** Determine the root representative of the set containing element `x`.
+* **Union(x, y):** Merge the sets containing elements `x` and `y`.
+
+In this code, only the **Find** operation is implemented. It works by following the `pred` (predecessor/parent) pointers until reaching the root of the set (a vertex that points to itself).
+
+This is particularly useful in graph algorithms like Kruskal’s algorithm for MST, where we need to check whether two vertices belong to the same connected component.
+
+---
+
+## 📖 Code Walkthrough (Line by Line)
+
+```c
+#include <stdio.h>   // Standard I/O library for input/output functions
+```
+
+* Includes the standard input/output header for future use (e.g., printing/debugging).
+
+```c
+#define MAX_LINE 100   // Maximum line length (possibly for file input)
+```
+
+* Defines a constant `MAX_LINE` which can be used for handling input buffer sizes.
+
+```c
+enum {WHITE, GREY, BLACK};
+```
+
+* Declares an **enumeration** for graph traversal states:
+
+  * `WHITE`: Vertex has not been visited yet.
+  * `GREY`: Vertex is discovered but not fully explored.
+  * `BLACK`: Vertex and its neighbors have been fully processed.
+
+```c
+typedef struct graph_s graph_t;
+typedef struct vertex_s vertex_t;
+```
+
+* Creates type aliases for the structures to simplify usage (so you can write `graph_t` instead of `struct graph_s`).
+
+```c
+struct graph_s {
+    vertex_t *g;   // Pointer to an array of vertices (the graph's vertex list)
+    int nv;        // Number of vertices in the graph
+};
+```
+
+* Defines the **graph structure**:
+
+  * `g`: Array of vertices.
+  * `nv`: Number of vertices.
+
+```c
+struct vertex_s {
+    int id;           // Unique identifier for the vertex
+    int color;        // Traversal state (WHITE, GREY, BLACK)
+    int dist;         // Distance from source (BFS) or depth level
+    int disc_time;    // Discovery time (DFS timestamp)
+    int endp_time;    // Finish time (DFS completion timestamp)
+    int pred;         // Predecessor (used in traversals or union-find parent)
+    int scc;          // Strongly Connected Component ID
+    int *rowAdj;      // Pointer to adjacency matrix row for this vertex
+};
+```
+
+* Defines the **vertex structure**, storing traversal and connectivity information.
+* `rowAdj` represents outgoing edges (1 if edge exists, 0 if not).
+
+```c
+static int union_find_find(graph_t *g, int k) {
+    int i = k;   // Start from the given vertex index
+    while (i != g->g[i].pred) {
+        i = g->g[i].pred;  // Move up the parent chain
+    }
+    return i;  // Return the root representative
+}
+```
+
+* Implements the **Find operation**:
+
+  * Starts from vertex `k`.
+  * Follows the chain of predecessors (`pred`) until reaching the root (where `pred[i] == i`).
+  * Returns the root index.
+
+---
+
+## 🚀 Key Takeaways
+
+* The code sets up **graph data structures** with rich metadata (distances, times, colors).
+* It introduces **Union-Find**, an essential data structure for graph algorithms.
+* The `find` function helps determine connected components and prevents cycles when building MSTs.
+
+---
+
+## 📂 Future Improvements
+
+* Implement **Union operation** (to merge two sets).
+* Add **Path Compression** in `find` for efficiency.
+* Extend the graph structure to include weighted edges for MST algorithms.
+* Provide BFS/DFS traversal implementations using the defined structures.
