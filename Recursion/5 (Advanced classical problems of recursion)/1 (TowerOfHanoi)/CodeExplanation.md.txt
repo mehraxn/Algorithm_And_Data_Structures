@@ -1,0 +1,374 @@
+# Towers of Hanoi — C Implementation (Full Walkthrough)
+
+This README explains a compact C program that prints the optimal move sequence for solving the classic **Towers of Hanoi** puzzle. We’ll go line by line, unpack the recursion, prove the move count, inspect the I/O details, and discuss limits and improvements.
+
+---
+
+## 🧩 What the program does
+
+Given a number of disks `n` stacked on **peg A** (top to bottom, smallest to largest), the program prints the steps to move the entire stack to **peg C**, obeying the rules:
+
+1. Move **one disk at a time**.
+2. Never place a larger disk on top of a smaller disk.
+
+The algorithm used is the **classic recursive solution**, which uses peg **B** as an auxiliary.
+
+---
+
+## 📌 The code (as given)
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+
+/* function prototypes */
+void hanoi_r(int n, int src, int dst);
+
+/*
+  main program
+*/
+int main(void) {
+    int n;
+    fprintf(stdout, "Number of disks: ");
+    scanf("%d", &n);
+    hanoi_r(n, 0, 2);  // Start with peg A (0) to peg C (2)
+
+    return EXIT_SUCCESS;
+}
+
+/* Generate the Hanoi moves using recursion */
+void hanoi_r(int n, int src, int dst) {
+    int aux;
+
+    if (n > 0) {
+        aux = 3 - (src + dst);  // Calculate auxiliary peg (0=A, 1=B, 2=C)
+        hanoi_r(n - 1, src, aux);
+        fprintf(stdout, "Disk %d from peg %c to peg %c\n",
+                n, 'A' + src, 'A' + dst);
+        hanoi_r(n - 1, aux, dst);
+    }
+    return;
+}
+```
+
+---
+
+## 🧠 Big picture: how recursion solves Hanoi
+
+To move `n` disks from `src` to `dst`:
+
+1. Move the top `n-1` disks from `src` to the **auxiliary** peg.
+2. Move the largest disk (`n`) from `src` to `dst`.
+3. Move the `n-1` disks from auxiliary to `dst`.
+
+The **base case** is `n == 0`, which does nothing.
+
+This yields the optimal number of moves `M(n)` with the recurrence:
+
+* `M(0) = 0`
+* `M(n) = 2*M(n-1) + 1` → Solving gives **`M(n) = 2^n - 1`**.
+
+---
+
+## 🔎 Line‑by‑line explanation
+
+### Headers
+
+* `#include <stdio.h>` — standard I/O (for `fprintf`, `scanf`).
+* `#include <stdlib.h>` — utility definitions (for `EXIT_SUCCESS`).
+
+### Prototype
+
+```c
+void hanoi_r(int n, int src, int dst);
+```
+
+Declares the recursive function before `main` so the compiler knows its signature.
+
+### `main`
+
+```c
+int main(void) {
+    int n;
+    fprintf(stdout, "Number of disks: ");
+    scanf("%d", &n);
+    hanoi_r(n, 0, 2);  // Start with peg A (0) to peg C (2)
+    return EXIT_SUCCESS;
+}
+```
+
+* Prompts and reads an integer `n` from the user.
+* Calls `hanoi_r(n, 0, 2)` meaning: move from peg **0 (A)** to **2 (C)**.
+* Exits with success.
+
+> **Tip:** Some terminals won’t show a prompt without a newline or flush. You can ensure the prompt appears immediately by adding `fflush(stdout);` after the prompt, or by printing a newline.
+
+### `hanoi_r`
+
+```c
+void hanoi_r(int n, int src, int dst) {
+    int aux;
+
+    if (n > 0) {
+        aux = 3 - (src + dst);
+        hanoi_r(n - 1, src, aux);
+        fprintf(stdout, "Disk %d from peg %c to peg %c\n",
+                n, 'A' + src, 'A' + dst);
+        hanoi_r(n - 1, aux, dst);
+    }
+}
+```
+
+* **Parameters:**
+
+  * `n` — how many disks to move.
+  * `src` — source peg index (0=A, 1=B, 2=C).
+  * `dst` — destination peg index.
+* **Base case:** when `n <= 0`, do nothing.
+* **Auxiliary peg calculation:**
+
+  * The set of pegs is `{0, 1, 2}` and `0 + 1 + 2 = 3`.
+  * If `src` and `dst` are distinct, the remaining peg is `3 - (src + dst)`.
+  * Example: `src=0`, `dst=2` → `aux = 3 - (0 + 2) = 1` (peg B).
+* **Recursive steps:**
+
+  1. Move `n-1` from `src` → `aux`.
+  2. Print the move of the largest disk `n` from `src` → `dst`.
+  3. Move `n-1` from `aux` → `dst`.
+* **Printing pegs:** `'A' + src` converts `0→'A'`, `1→'B'`, `2→'C'` using character arithmetic.
+
+---
+
+## 🧮 Move count and optimality (short proof)
+
+* By the recurrence `M(n) = 2*M(n-1) + 1` with `M(0)=0`, we solve to `M(n)=2^n-1`.
+* **Optimality intuition:** To move the largest disk, you must first clear all `n-1` smaller disks to the other peg (at least `M(n-1)` moves), move the largest disk once, then move the `n-1` disks onto it (another `M(n-1)`). No solution can do better because the largest move is blocked until all smaller disks move.
+
+---
+
+## 🧭 Example walkthrough (`n = 3`)
+
+**Call:** `hanoi_r(3, A, C)`
+
+**Recursion tree (calls):**
+
+```
+hanoi(3,A,C)
+├─ hanoi(2,A,B)
+│  ├─ hanoi(1,A,C)
+│  │  └─ hanoi(0,...)  // does nothing
+│  ├─ print: Disk 1 A→B
+│  └─ hanoi(1,C,B)
+│     ├─ hanoi(0,...)
+│     ├─ print: Disk 2 A→C
+│     └─ hanoi(0,...)
+├─ print: Disk 3 A→C
+└─ hanoi(2,B,C)
+   ├─ hanoi(1,B,A)
+   │  └─ hanoi(0,...)
+   ├─ print: Disk 1 B→C
+   └─ hanoi(1,A,C)
+      ├─ hanoi(0,...)
+      ├─ print: Disk 2 B→A
+      └─ hanoi(0,...)
+```
+
+**Actual printed moves (7 = 2³−1 lines):**
+
+```
+Disk 1 from peg A to peg B
+Disk 2 from peg A to peg C
+Disk 1 from peg B to peg C
+Disk 3 from peg A to peg C
+Disk 1 from peg C to peg B
+Disk 2 from peg C to peg B
+Disk 1 from peg B to peg A
+```
+
+> Note: The exact order depends on how you label the auxiliary moves; with the given code, the sequence is the canonical optimal order.
+
+---
+
+## ⌛ Complexity and practical limits
+
+* **Time complexity:** `Θ(2^n)` — the number of moves grows exponentially.
+* **Space complexity (call stack depth):** `Θ(n)` — one stack frame per level.
+* **Output size:** prints `2^n - 1` lines; this dominates runtime for larger `n`.
+* **Practical limits:**
+
+  * Very large `n` will:
+
+    * Produce an impractically large number of lines.
+    * Risk stack overflow (recursion depth) depending on your system.
+  * In practice, printing beyond \~25–30 disks is already enormous (over a **billion** moves at `n=30`).
+
+---
+
+## 🖨️ I/O and formatting details
+
+* `fprintf(stdout, ...)` is functionally equivalent to `printf(...)` here (both write to standard output). Using `fprintf` makes it explicit where the output goes.
+* The prompt does not include a newline. Some systems flush line-buffered output automatically on read; others may not. To be safe:
+
+  ```c
+  fprintf(stdout, "Number of disks: ");
+  fflush(stdout);
+  ```
+* `scanf("%d", &n)` returns the number of items read (should be `1`). You can check it for robust input handling.
+
+---
+
+## 🧱 Peg encoding and the `aux` trick
+
+* Pegs are encoded as integers: `A=0`, `B=1`, `C=2`.
+* Since `0+1+2 = 3`, the unused peg given `src` and `dst` is `3 - (src + dst)`.
+* This works **only** because the indices are exactly `{0,1,2}` and `src ≠ dst`.
+
+**Alternative (more general & explicit):**
+
+```c
+int aux = (src ^ dst) ^ 3; // Also works for 0,1,2 mapping
+// or
+int labels[3] = {0,1,2};
+int used[3] = {0};
+used[src] = used[dst] = 1;
+int aux = -1;
+for (int i=0;i<3;++i) if (!used[i]) aux = i;
+```
+
+---
+
+## 🧪 Sample runs
+
+```
+Number of disks: 1
+Disk 1 from peg A to peg C
+```
+
+```
+Number of disks: 2
+Disk 1 from peg A to peg B
+Disk 2 from peg A to peg C
+Disk 1 from peg B to peg C
+```
+
+```
+Number of disks: 3
+Disk 1 from peg A to peg B
+Disk 2 from peg A to peg C
+Disk 1 from peg B to peg C
+Disk 3 from peg A to peg C
+Disk 1 from peg C to peg B
+Disk 2 from peg C to peg B
+Disk 1 from peg B to peg A
+```
+
+---
+
+## 🛠️ Building & running
+
+Compile with GCC/Clang:
+
+```bash
+gcc -Wall -Wextra -O2 hanoi.c -o hanoi
+```
+
+Run:
+
+```bash
+./hanoi
+```
+
+On Windows (MinGW):
+
+```bash
+gcc -Wall -Wextra -O2 hanoi.c -o hanoi.exe
+hanoi.exe
+```
+
+---
+
+## 🧯 Robustness upgrades (recommended)
+
+**Why:** safer input, clearer prompts, guaranteed flushing, and guards against invalid `n`.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+void hanoi_r(int n, int src, int dst);
+
+int main(void) {
+    int n;
+    fprintf(stdout, "Number of disks (>=0): ");
+    fflush(stdout);
+
+    if (scanf("%d", &n) != 1) {
+        fprintf(stderr, "\nError: invalid input.\n");
+        return EXIT_FAILURE;
+    }
+    if (n < 0) {
+        fprintf(stderr, "\nError: n must be >= 0.\n");
+        return EXIT_FAILURE;
+    }
+
+    // Optional: warn on large n
+    if (n > 25) {
+        fprintf(stderr, "Warning: this will print %llu moves.\n",
+                (n >= (int)(8*sizeof(unsigned long long))) ? 0ULL : ((1ULL<<n) - 1ULL));
+    }
+
+    hanoi_r(n, 0, 2);
+    return EXIT_SUCCESS;
+}
+
+void hanoi_r(int n, int src, int dst) {
+    if (n <= 0) return;
+    int aux = 3 - (src + dst);
+    hanoi_r(n - 1, src, aux);
+    fprintf(stdout, "Disk %d from peg %c to peg %c\n", n, 'A' + src, 'A' + dst);
+    hanoi_r(n - 1, aux, dst);
+}
+```
+
+**Notes:**
+
+* We check `scanf`’s return value.
+* We validate `n >= 0`.
+* We warn when `n` is large (move count becomes huge). The `1ULL<<n` expression is guarded to avoid undefined shift if `n` ≥ 64 on typical systems.
+
+---
+
+## 🧩 Variations & extensions
+
+* **Count moves without printing:** use `2^n - 1` directly when `n < 64` (fits in 64-bit), or compute with big integers.
+* **Track or verify legality:** insert assertions to ensure no larger-on-smaller placement (use arrays representing pegs).
+* **Iterative solution:** exists using bit patterns / Gray code; avoids recursion but complexity remains `Θ(2^n)`.
+* **Custom peg labels:** replace `'A' + index` with a `char labels[3] = {'A','B','C'};` array for clarity.
+
+---
+
+## 🧱 Common pitfalls
+
+* Forgetting the base case (`n <= 0`) → infinite recursion (if wrong condition) or extra prints.
+* Using wrong aux formula when pegs aren’t `{0,1,2}`.
+* Expecting tail-call optimization — not applicable here (two recursive calls; not in tail position).
+* Printing prompts without newline/flush → prompt may not appear immediately on some systems.
+
+---
+
+## 📚 Glossary
+
+* **Recursion:** A function that calls itself to solve smaller subproblems.
+* **Base case:** The smallest input where the function stops (here: `n <= 0`).
+* **Auxiliary peg:** The third peg used as temporary storage.
+* **Call stack:** Where active function calls (frames) are stored; depth grows with recursion.
+
+---
+
+## ✅ Takeaways
+
+* The program prints the **optimal** solution with exactly **`2^n - 1`** moves.
+* Recursion mirrors the puzzle’s structure: solve `n-1`, move the largest disk, solve `n-1`.
+* The `aux = 3 - (src + dst)` trick is a neat arithmetic way to find the remaining peg when pegs are `0,1,2`.
+* For real use, add input validation and consider the practical limits of exponential output.
