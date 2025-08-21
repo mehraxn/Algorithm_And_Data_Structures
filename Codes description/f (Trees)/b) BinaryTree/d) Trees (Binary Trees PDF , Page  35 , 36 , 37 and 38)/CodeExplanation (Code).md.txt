@@ -1,0 +1,143 @@
+# Prefix Evaluator — Line‑by‑Line README
+
+This document explains *every line* of the sample C program that evaluates **prefix (Polish) notation** expressions using a recursive function `eval_r`. Nothing is skipped; even braces are noted as block delimiters.
+
+---
+
+## Full source used in this explanation
+
+```c
+#include <stdio.h>     // fprintf, printf, sscanf
+#include <ctype.h>     // isspace, isdigit
+#include <stdlib.h>    // EXIT_SUCCESS
+
+float eval_r(char *expr, int *pos_ptr); // forward declaration
+
+int main(int argc, char *argv[]) {
+    float result;
+    int pos = 0;
+
+    if (argc < 2) {
+        fprintf(stderr, "Error: missing parameter.\n");
+        fprintf(stderr, "Run as: %s prefix_expression\n", argv[0]);
+        return 1;
+    }
+
+    result = eval_r(argv[1], &pos);
+    fprintf(stdout, "Result = %.2f\n", result);
+    return EXIT_SUCCESS;
+}
+
+float eval_r(char *expr, int *pos_ptr) {
+    float left, right, result;
+    char operator;
+    int k = *pos_ptr;
+
+    while (isspace(expr[k])) {
+        k++;
+    }
+
+    if (expr[k] == '+' || expr[k] == '*' ||
+        expr[k] == '-' || expr[k] == '/') {
+        operator = expr[k++];
+        left  = eval_r(expr, &k);
+        right = eval_r(expr, &k);
+        switch (operator) {
+            case '+': result = left + right; break;
+            case '*': result = left * right; break;
+            case '-': result = left - right; break;
+            case '/': result = left / right; break;
+        }
+    } else {
+        sscanf(&expr[k], "%f", &result);
+        while (isdigit(expr[k]) || expr[k] == '.') {
+            k++;
+        }
+    }
+
+    *pos_ptr = k;
+    return result;
+}
+```
+
+---
+
+## Header and declaration lines
+
+* `#include <stdio.h>` — Imports declarations for I/O functions (`printf`, `fprintf`, `sscanf`).
+* `#include <ctype.h>` — Imports character classification functions used by the parser (`isspace`, `isdigit`).
+* `#include <stdlib.h>` — Supplies the `EXIT_SUCCESS` macro used as the successful return code from `main`.
+* `float eval_r(char *expr, int *pos_ptr);` — A *forward declaration* so `main` can call `eval_r` before the function’s full definition appears.
+
+---
+
+## `main` — line by line
+
+* `int main(int argc, char *argv[]) {` — Program entry point. `argc` is the count of command‑line arguments; `argv` is the array of C‑strings. `argv[0]` is the program name, `argv[1]` will hold the prefix expression when provided.
+* `    float result;` — Declares a `float` to store the final numeric value of the evaluated expression.
+* `    int pos = 0;` — Declares and initializes the parsing index to the *start* of the string. This will be passed by address to `eval_r` so the function can advance it.
+* `    ` *(blank line)* — Visual separation; no effect.
+* `    if (argc < 2) {` — Guard: if no expression was supplied on the command line, print usage and exit.
+* `        fprintf(stderr, "Error: missing parameter.\n");` — Prints an error message to the standard error stream.
+* `        fprintf(stderr, "Run as: %s prefix_expression\n", argv[0]);` — Prints usage; `%s` is replaced by the program name (`argv[0]`).
+* `        return 1;` — Returns non‑zero to indicate failure (legacy style; could also use `EXIT_FAILURE`).
+* `    }` — End of the `if` block.
+* `    ` *(blank line)* — Visual separation; no effect.
+* `    result = eval_r(argv[1], &pos);` — Calls the recursive evaluator on the user’s input string (`argv[1]`). Passes the **address** of `pos` so `eval_r` can update the caller’s idea of the current index.
+* `    fprintf(stdout, "Result = %.2f\n", result);` — Prints the computed value to standard output with two digits after the decimal point.
+* `    return EXIT_SUCCESS;` — Returns success (typically 0). Requires `<stdlib.h>`.
+* `}` — End of `main` function.
+
+---
+
+## `eval_r` — line by line
+
+* `float eval_r(char *expr, int *pos_ptr) {` — Begins the recursive function. Parameters: `expr` is the whole expression string; `pos_ptr` points to the current index into `expr`.
+* `    float left, right, result;` — Temporaries to hold the two operand values and the result for this call.
+* `    char operator;` — Will store the operator character when one is encountered.
+* `    int k = *pos_ptr;` — Copies the caller’s index to a local `k`. This is the cursor that walks through the string.
+* `    ` *(blank line)* — Visual separation; no effect.
+* `    while (isspace(expr[k])) {` — Skip any leading whitespace before the next token.
+* `        k++;` — Advance over a space character.
+* `    }` — End of the space‑skipping loop.
+* `    ` *(blank line)* — Visual separation; no effect.
+* `    if (expr[k] == '+' || expr[k] == '*' ||` — Start of a test: is the current char a supported operator?
+* `        expr[k] == '-' || expr[k] == '/') {` — Continues the operator test across a wrapped line for readability. If true, we are at an **operator token** in prefix form.
+* `        operator = expr[k++];` — Record the operator and advance `k` to the next character (post‑increment).
+* `        left  = eval_r(expr, &k);` — Recursively evaluate the **left** operand, beginning at the current index; the callee advances `k` to just past the left operand.
+* `        right = eval_r(expr, &k);` — Recursively evaluate the **right** operand next; again, `k` is advanced past it.
+* `        switch (operator) {` — Apply the operator to `left` and `right`.
+* `            case '+': result = left + right; break;` — Addition case.
+* `            case '*': result = left * right; break;` — Multiplication case.
+* `            case '-': result = left - right; break;` — Subtraction case.
+* `            case '/': result = left / right; break;` — Division case (no divide‑by‑zero check here).
+* `        }` — End of the `switch` block.
+* `    } else {` — **Else branch**: current token is not an operator, so it must be a numeric literal (terminal case).
+* `        sscanf(&expr[k], "%f", &result);` — Parses a `float` starting at `expr[k]` into `result`. `sscanf` reads as many number characters as it can.
+* `        while (isdigit(expr[k]) || expr[k] == '.') {` — Manually advance `k` past the characters that formed the number (digits and decimal point). This matches the limited numeric format the code supports.
+* `            k++;` — Move to the next character within the numeric token.
+* `        }` — End of the digit‑skipping loop.
+* `    }` — End of the `if/else` that distinguishes operator vs number.
+* `    ` *(blank line)* — Visual separation; no effect.
+* `    *pos_ptr = k;` — Writes the updated index back to the caller via the pointer so outer calls know where to continue parsing.
+* `    return result;` — Returns the computed value for this subtree (either the parsed number or the operator’s result).
+* `}` — End of `eval_r`.
+
+---
+
+## How it all fits together (brief)
+
+1. `main` reads the user’s prefix expression from `argv[1]` and starts parsing at `pos = 0`.
+2. `eval_r` skips spaces, then either:
+
+   * sees an **operator** → recursively computes the left and right sub‑expressions, applies the operator, returns the value; or
+   * sees a **number** → parses it with `sscanf`, advances past it, returns the number.
+3. Each call updates the shared index through `pos_ptr`, so the whole expression is consumed left‑to‑right in prefix order.
+
+---
+
+## Notes and reminders
+
+* Operators are assumed **binary** and space‑separated. Unary minus for negative literals isn’t handled (`-3.5` is read as an operator).
+* `sscanf` accepts more formats than the `while (isdigit||'.')` loop advances over. If you add support for signs or exponents, update both the parse and the advancement logic.
+* Consider checking for malformed inputs and divide‑by‑zero if you plan to use this in production code.
