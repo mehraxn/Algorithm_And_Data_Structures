@@ -1,6 +1,6 @@
 # Algorithm And Data Structures (AADS)
 
-![AADS Banner](assets/AADS_banner.png) <!-- Replace with your image path -->
+![Algorithm And Data Structures](Algoritmos%20y%20Estructuras%20de%20Datos.png)
 
 A comprehensive collection of **Algorithm & Data Structures (AADS)** implementations in **C language** with detailed explanations.  
 This repository is designed to help students, developers, and enthusiasts understand the core concepts of algorithms and data structures through **well-documented C programs** and **step-by-step notes**.
