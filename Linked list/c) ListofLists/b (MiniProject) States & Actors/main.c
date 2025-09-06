@@ -8,29 +8,25 @@ typedef struct LIST1 list1;
 
 struct LIST1 {
     char *name_state;
-    int size;
     list1 *next;
     list2 *right;
 };
 
 struct LIST2 {
     char *name_actor;
-    int size;
     list2 *next;
 };
 
 list2* create_actor(char *name) {
     list2 *new_actor = (list2 *)malloc(sizeof(list2));
     new_actor->name_actor = strdup(name);
-    new_actor->size = (int)strlen(name);
     new_actor->next = NULL;
     return new_actor;
 }
 
-list1* create_state(char *name, int size) {
+list1* create_state(char *name) {
     list1 *new_state = (list1 *)malloc(sizeof(list1));
     new_state->name_state = strdup(name);
-    new_state->size = size;
     new_state->next = NULL;
     new_state->right = NULL;
     return new_state;
@@ -86,7 +82,7 @@ list1* parse_file(FILE *fp) {
 
         list1 *s = find_state(head, state);
         if (!s) {
-            s = create_state(state, 0);
+            s = create_state(state);
             if (!head) {
                 head = tail = s;
             } else {
@@ -95,21 +91,18 @@ list1* parse_file(FILE *fp) {
             }
         }
         add_actor(s, actor);
-        s->size += 1;
     }
     return head;
 }
 
 void print_list(list1 *head) {
-    list1 *temp_state = head;
-    while (temp_state != NULL) {
-        printf("State: %s, Number of actors: %d\n", temp_state->name_state, temp_state->size);
-        list2 *temp_actor = temp_state->right;
-        while (temp_actor != NULL) {
-            printf("  Actor: %s (Length: %d)\n", temp_actor->name_actor, temp_actor->size);
-            temp_actor = temp_actor->next;
+    for (list1 *st = head; st; st = st->next) {
+        int count = 0;
+        for (list2 *a = st->right; a; a = a->next) count++;
+        printf("State: %s, Number of actors: %d\n", st->name_state, count);
+        for (list2 *a = st->right; a; a = a->next) {
+            printf("  Actor: %s (Length: %zu)\n", a->name_actor, strlen(a->name_actor));
         }
-        temp_state = temp_state->next;
         printf("\n");
     }
 }
