@@ -1,140 +1,379 @@
-# README: String to FIFO List Program
+# README — Split an Alphanumeric String into Letter & Digit Queues (C)
 
-## Overview
-This program processes a string containing sequences of lowercase letters and decimal digits, splits it into separate substrings of letters and digits, and stores these substrings into two circular FIFO (First-In-First-Out) linked lists. The program demonstrates modular programming, dynamic memory allocation, and the use of linked lists in C.
+This README explains a small C module that parses a string and splits it into **contiguous runs** of:
 
-## Problem Statement
-The goal is to:
-1. Split a string into substrings of contiguous letters and contiguous digits.
-2. Store these substrings in two separate circular FIFO linked lists:
-   - One for substrings of letters.
-   - One for substrings of digits.
-3. Print the content of the linked lists.
+* lowercase letters (`'a'..'z'`) → pushed in order to a **letters** FIFO (queue)
+* digits (`'0'..'9'`) → pushed in order to a **digits** FIFO (queue)
 
-For example, given the input string:
+Each run is stored as a dynamically allocated string inside a singly linked list node. The function performs two passes over the same input: first to extract letter runs, then to extract digit runs.
+
+> ❗️Scope: Only lowercase ASCII letters and decimal digits are recognized. All other characters (including uppercase letters and punctuation) act as *neutral separators*—they do not produce nodes and can “glue” runs together across them (details below).
+
+---
+
+## Table of Contents
+
+1. [Quick Start](#quick-start)
+2. [Data Structures](#data-structures)
+3. [Public API](#public-api)
+4. [How It Works (Step by Step)](#how-it-works-step-by-step)
+5. [Examples](#examples)
+6. [Complexity](#complexity)
+7. [Memory Management](#memory-management)
+8. [Portability Notes](#portability-notes)
+9. [Design Choices & Edge Cases](#design-choices--edge-cases)
+10. [Troubleshooting](#troubleshooting)
+
+---
+
+## Quick Start
+
+### Demo `main.c`
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// --- declarations from the module ---
+typedef struct node_s node_t;
+struct node_s { char *letter; node_t *next; };
+
+node_t *create_node(char *key);
+void string_to_fifo(char *s, node_t **letter, node_t **digit);
+
+static void print_list(const char *title, node_t *head) {
+    printf("%s:\n", title);
+    for (node_t *p = head; p; p = p->next) printf("  %s\n", p->letter);
+}
+
+static void free_list(node_t *head) {
+    while (head) { node_t *n = head->next; free(head->letter); free(head); head = n; }
+}
+
+int main(void) {
+    char input[] = "ab12cd003ef";
+    node_t *letters = NULL, *digits = NULL;
+
+    string_to_fifo(input, &letters, &digits);
+
+    print_list("Letters", letters);   // expected: ab, cd, ef
+    print_list("Digits", digits);     // expected: 12, 003
+
+    free_list(letters);
+    free_list(digits);
+    return 0;
+}
 ```
-abc12345xyz333fgew
+
+### Build
+
+```bash
+gcc -std=c11 -Wall -Wextra -O2 main.c your_module.c -o demo
+./demo
 ```
-The program will produce:
-- Letter list: `{abc, xyz, fgew}`
-- Digit list: `{12345, 333}`
 
-## Functionalities
+On MSVC (Windows), see the **Portability Notes** regarding `strdup` and VLAs.
 
-### Main Function (`main`)
-1. Initializes pointers to the letter and digit FIFO lists as `NULL`.
-2. Calls `string_to_fifo` to process the input string and populate the two FIFO lists.
-3. Debugging output displays the content of the digit and letter lists.
-4. Ends the program without deallocating memory (deallocation would be added for completeness).
-
-### `string_to_fifo`
-This function processes the input string, splits it into substrings, and stores them in the appropriate FIFO list.
-
-#### Parameters:
-- `char *s`: The input string.
-- `node_t **letter`: Pointer to the FIFO list for letters.
-- `node_t **digit`: Pointer to the FIFO list for digits.
-
-#### Process:
-1. **Initialization:**
-   - Allocate a temporary buffer `tmp` to store the current substring.
-   - Use a variable `ndl` (nothing-digit-letter) to track the current state:
-     - `0`: No characters processed yet.
-     - `1`: Current substring contains digits.
-     - `2`: Current substring contains letters.
-
-2. **String Parsing:**
-   - Iterate through each character of the string:
-     - If the character type changes (from digit to letter or vice versa):
-       - Terminate the current substring with `\0`.
-       - Store it in the appropriate FIFO list using `enqueue`.
-       - Reset `tmp` for the next substring.
-     - Otherwise, append the character to `tmp`.
-
-3. **Final Substring:**
-   - Add the last substring to the corresponding FIFO list.
-
-4. **Error Handling:**
-   - Exits the program if memory allocation fails.
-
-### `enqueue`
-Adds a new node containing the substring to the tail of the FIFO list.
-
-#### Parameters:
-- `node_t **tail`: Pointer to the tail of the FIFO list.
-- `char *s`: The substring to add.
-
-#### Process:
-1. Create a new node using `new_node`.
-2. Duplicate the substring `s` into the node.
-3. If the list is empty, set the node to point to itself (circular).
-4. Otherwise, insert the node at the tail and update the tail pointer.
-
-### `new_node`
-Allocates memory for a new node and initializes it.
-
-#### Process:
-1. Allocate memory for a `node_t` structure.
-2. Print an error and terminate if allocation fails.
-3. Return the newly created node.
-
-### `traversal`
-Prints the content of a FIFO list for debugging purposes.
-
-#### Parameters:
-- `node_t *tail`: Pointer to the tail of the FIFO list.
-
-#### Process:
-1. Check if the list is empty.
-2. If not, iterate through the list starting from the tail's next node and print each substring.
+---
 
 ## Data Structures
 
-### `node_t`
-The `node_t` structure represents a node in the circular FIFO list.
-
-#### Fields:
-- `char *s`: Pointer to the string stored in the node.
-- `node_t *next`: Pointer to the next node in the list.
-
-## Example Execution
-
-### Input:
-```
-abc12345xyz333fgew
+```c
+typedef struct node_s node_t;
+struct node_s {
+    char *letter;   // dynamically allocated C-string holding a run
+    node_t *next;   // next element in the FIFO
+};
 ```
 
-### Output:
-```
-Digit List : -> 12345 -> 333
-Letter List: -> abc -> xyz -> fgew
+* Each node stores **one run** (either letters or digits) as a NUL-terminated string.
+* Both the letters queue and the digits queue are singly linked lists where new nodes are appended at the tail to preserve input order (FIFO behavior).
+
+---
+
+## Public API
+
+### `node_t *create_node(char *key);`
+
+Allocates a node and duplicates the null-terminated `key` string into `node->letter` using `strdup`. Sets `node->next = NULL` and returns the node pointer.
+
+> The caller owns the returned node and must eventually free both `node->letter` and `node`.
+
+### `void string_to_fifo(char *s, node_t **letter, node_t **digit);`
+
+Parses the input string `s` **twice**:
+
+1. **Pass 1** builds/extends the **letters** queue referenced by `*letter`, extracting contiguous runs of `'a'..'z'`.
+2. **Pass 2** builds/extends the **digits** queue referenced by `*digit`, extracting contiguous runs of `'0'..'9'`.
+
+If `*letter` or `*digit` are non-`NULL` upon entry, new nodes are appended to the existing tails. If they are `NULL`, the function initializes the head pointers.
+
+Parameters are **double pointers** so the function can initialize the heads when the first node is created.
+
+---
+
+## How It Works (Step by Step)
+
+Below is a paraphrased walk-through of the implementation logic.
+
+### 1) Local state
+
+```c
+node_t *head_string = *letter; // current head for letters
+node_t *head_string_temp = head_string; // tail pointer for letters
+
+char *temp = s;                // remember original start
+char temp_string[strlen(s)+1]; // buffer for the current run (VLA)
+int counter = 0;               // number of chars in the buffer
 ```
 
-### Explanation:
-- The input string is split into `{abc, xyz, fgew}` for letters and `{12345, 333}` for digits.
-- These substrings are stored in separate circular FIFO lists.
+* `temp_string` acts as a scratch buffer that accumulates the current run.
+* `counter` tracks how many characters have been buffered.
+
+### 2) First pass — collect letter runs
+
+Pseudocode view:
+
+```
+for each char c in s:
+  if c is digit:
+    if counter>0: terminate buffer → create node → append to letters; reset counter
+    else: continue
+  else if c is lowercase letter:
+    push c into buffer
+  advance s
+end
+
+if counter>0: flush final buffered run into a node
+```
+
+Key nuances:
+
+* Hitting a **digit** means a letter run (if any) is complete → *flush* it.
+* Any other character (e.g., punctuation, uppercase) **does not flush** the buffer; it simply gets skipped and the loop continues. This means such characters *do not break a run* by themselves (they behave like neutral glue).
+
+### 3) Second pass — collect digit runs
+
+* Reset `s = temp` and `counter = 0`.
+* Mirror of the first pass, but inverted: letters trigger a flush; digits are accumulated.
+* Same neutral behavior for all non-letter, non-digit characters.
+
+### 4) Appending nodes (FIFO)
+
+Whenever a run is flushed:
+
+```c
+temp_string[counter] = '\0';
+node_t *next_move = create_node(temp_string);
+if (tail == NULL) { head = tail = next_move; *head_param = head; }
+else { tail->next = next_move; tail = next_move; }
+```
+
+Appending at the tail preserves the original left-to-right order of runs → FIFO semantics.
+
+---
+
+## Examples
+
+### Example 1
+
+Input: `"ab12cd003ef"`
+
+* **Letters queue:** `"ab" → "cd" → "ef"`
+* **Digits queue:** `"12" → "003"`
+
+### Example 2 (neutral characters)
+
+Input: `"a-b_c99d"`
+
+* Non-letter/digit characters (`-`, `_`) are neutral and **do not flush** buffers.
+* **Letters:** one merged run `"abcd"`
+* **Digits:** one run `"99"`
+
+### Example 3 (uppercase & punctuation)
+
+Input: `"ABCx..yZ10!20"`
+
+* Only lowercase letters are recognized. `x` and `y` count; `ABC` and `Z` are neutral.
+* Dots and `!` are neutral as well.
+* **Letters:** `"xy"`
+* **Digits:** `"10" → "20"`
+
+---
+
+## Complexity
+
+* **Time:** `O(n)` where `n = strlen(s)`, with a small constant factor (two linear passes).
+* **Space:** `O(k)` for the total length of all extracted runs (each duplicated with `strdup`) plus `O(m)` for `m` nodes.
+
+---
 
 ## Memory Management
-- Dynamic memory allocation is used for:
-  - Temporary buffers.
-  - Nodes in the FIFO lists.
-- No explicit memory deallocation is implemented in this example, but it should be added for completeness in a production environment.
 
-## Compilation and Execution
-1. Save the code to a file (e.g., `string_to_fifo.c`).
-2. Compile using a C compiler:
-   ```bash
-   gcc -o string_to_fifo string_to_fifo.c
+Because `create_node` duplicates run strings, you must free them:
+
+```c
+void free_list(node_t *head) {
+    while (head) {
+        node_t *next = head->next;
+        free(head->letter);
+        free(head);
+        head = next;
+    }
+}
+```
+
+> Always free both queues after use to avoid leaks.
+
+---
+
+## Portability Notes
+
+1. **`strdup`** is POSIX. On some platforms (e.g., MSVC) use `_strdup`, or provide a fallback:
+
+   ```c
+   #ifndef _MSC_VER
+   #  define xstrdup strdup
+   #else
+   #  define xstrdup _strdup
+   #endif
    ```
-3. Run the executable:
-   ```bash
-   ./string_to_fifo
+
+   Then replace `strdup` with `xstrdup`.
+
+2. **Variable Length Arrays (VLAs)** like `char temp_string[strlen(s)+1];` are a C99 feature and are not supported by MSVC. A portable alternative is to allocate dynamically:
+
+   ```c
+   size_t n = strlen(s);
+   char *temp_string = malloc(n + 1);
+   // ... use then free(temp_string)
    ```
 
-## Limitations
-- Assumes the input string is valid and non-empty.
-- Does not handle memory deallocation, which should be implemented for better resource management.
+3. **Character set**: The code assumes ASCII and ignores locale/Unicode. If you need Unicode letter/digit classification, use appropriate libraries or `ctype.h` with care (still locale-limited) and extend logic.
 
-## Conclusion
-This program effectively demonstrates how to parse and categorize a string into separate substrings using circular FIFO lists. It employs modular design and highlights the importance of dynamic memory management in C.
+---
 
+## Design Choices & Edge Cases
+
+* **Two-pass design** keeps each pass simple and avoids interleaving logic for two output queues.
+* **Neutral separators**: Any character outside `'a'..'z'` and `'0'..'9'` does **not** cause a flush. This can *merge* runs across punctuation/uppercase. If you instead want punctuation to *break* runs, add an `else` branch that flushes when `counter>0`.
+* **Empty input**: No nodes created; heads remain unchanged (likely `NULL`).
+* **All digits or all letters**: Works; only the corresponding queue receives nodes.
+* **Very long inputs**: With a VLA buffer, extremely long inputs may risk stack pressure; prefer heap allocation for robustness.
+* **Allocation failures**: Current code assumes `malloc/strdup` succeed. For production, check for `NULL` and handle errors.
+
+---
+
+## Troubleshooting
+
+* **No output in one of the queues**: Ensure your input actually contains the relevant class (letters/digits). Remember uppercase letters are ignored by design.
+* **Unexpected merging across punctuation**: That’s by design (neutral separators). Modify the logic to flush on any non-matching character if you want stricter segmentation.
+* **Compiler errors about `strdup`**: Include `<string.h>` (already done) and see the portability section for MSVC.
+* **Warnings about VLAs**: Switch to dynamic allocation for `temp_string`.
+
+---
+
+## Appendix: Reference Implementation (for context)
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef struct node_s node_t;
+struct node_s {
+    char *letter;
+    node_t *next;
+};
+
+node_t *create_node(char *key) {
+    node_t *new_node = (node_t *)malloc(sizeof(node_t));
+    new_node->letter = strdup(key);
+    new_node->next = NULL;
+    return new_node;
+}
+
+void string_to_fifo(char *s, node_t **letter, node_t **digit) {
+    node_t *head_string = *letter;         
+    node_t *head_string_temp = head_string;
+
+    char *temp = s;                       
+    char temp_string[strlen(s) + 1];
+    int counter = 0;
+
+    while (*s != '\0'){
+        if (*s >= '0' && *s <= '9'){
+            if (counter == 0) { s++; continue; }
+            else {
+                temp_string[counter] = '\0';
+                node_t *next_move = create_node(temp_string);
+
+                if (head_string_temp == NULL) {
+                    head_string_temp = head_string = *letter = next_move;
+                } else {
+                    head_string_temp->next = next_move;
+                    head_string_temp = next_move;
+                }
+                counter = 0;
+            }
+        }
+        else if (*s >= 'a' && *s <= 'z'){
+            temp_string[counter] = *s;
+            counter++;
+        }
+        s++;
+    }
+
+    if (counter != 0){
+        temp_string[counter] = '\0';
+        node_t *next_move = create_node(temp_string);
+        if (head_string_temp == NULL) {
+            head_string_temp = head_string = *letter = next_move;
+        } else {
+            head_string_temp->next = next_move;
+            head_string_temp = next_move;
+        }
+    }
+
+    node_t *head_digit = *digit;
+    node_t *head_digit_temp = head_digit;
+
+    s = temp;
+    counter = 0;
+
+    while (*s != '\0'){
+        if (*s >= 'a' && *s <= 'z'){
+            if (counter == 0) { s++; continue; }
+            else {
+                temp_string[counter] = '\0';
+                node_t *next_move = create_node(temp_string);
+
+                if (head_digit_temp == NULL) {
+                    head_digit_temp = head_digit = *digit = next_move;
+                } else {
+                    head_digit_temp->next = next_move;
+                    head_digit_temp = next_move;
+                }
+                counter = 0;
+            }
+        }
+        else if (*s >= '0' && *s <= '9'){
+            temp_string[counter] = *s;
+            counter++;
+        }
+        s++;
+    }
+
+    if (counter != 0){
+        temp_string[counter] = '\0';
+        node_t *next_move = create_node(temp_string);
+        if (head_digit_temp == NULL) {
+            head_digit_temp = head_digit = *digit = next_move;
+        } else {
+            head_digit_temp->next = next_move;
+            head_digit_temp = next_move;
+        }
+    }
+}
+```
